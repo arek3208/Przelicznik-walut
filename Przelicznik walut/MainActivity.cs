@@ -15,15 +15,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Refit;
-//DODAĆ PLN!!!
+
 namespace Przelicznik_walut
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
         INbpApi nbpApi;
-        Spinner spinner1;
+        Spinner spinner1, spinner2;
         List<Currency> currencies;
+        Dictionary<string, double> currenciesDictionary;
+        TextView textView;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -35,6 +37,7 @@ namespace Przelicznik_walut
             SetSupportActionBar(toolbar);
 
             spinner1 = FindViewById<Spinner>(Resource.Id.spinner1);
+            spinner2 = FindViewById<Spinner>(Resource.Id.spinner2);
             spinner1.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinner1_ItemSelected);
 
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
@@ -51,8 +54,10 @@ namespace Przelicznik_walut
             {
                 currencyNames.Add(i.name);
             }
-            spinner1.Adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, currencyNames);
-             
+            var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, currencyNames);
+            spinner1.Adapter = adapter;
+            spinner2.Adapter = adapter;
+
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -84,6 +89,7 @@ namespace Przelicznik_walut
             try
             {
                 List<ResponseItem> items = await nbpApi.GetRates();
+                items[0].rates.Add(new Currency("złoty polski", "PLN", 1));
                 return items[0].rates;
             }
             catch (Exception e)

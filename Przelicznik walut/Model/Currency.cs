@@ -4,6 +4,14 @@ namespace App2.Model
 {
 	public class Currency
 	{
+		public Currency(string name, string code, double rate)
+		{
+			this.name = name;
+			this.code = code;
+			this.rate = rate;
+		}
+			
+
 		[JsonProperty(PropertyName = "currency")]
 		public string name { get; set; }
 

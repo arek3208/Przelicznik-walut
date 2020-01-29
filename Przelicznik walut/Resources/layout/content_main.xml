@@ -3,8 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:showIn="@layout/activity_main"
     android:minWidth="25px"
@@ -31,5 +31,14 @@
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
         android:layout_below="@+id/spinner2"
-        android:textSize="20" />
+        android:textSize="20px" />
+    <Button
+        android:text="@string/reverse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/button1"
+        android:layout_centerHorizontal="false"
+        android:layout_centerInParent="false"
+        android:layout_below="@+id/spinner2"
+        android:layout_centerVertical="false" />
 </RelativeLayout>
