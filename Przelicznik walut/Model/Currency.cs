@@ -20,5 +20,10 @@ namespace App2.Model
 
 		[JsonProperty(PropertyName = "mid")]
 		public double rate { get; set; }
+
+		public override string ToString()
+		{
+			return code + ' ' + name;
+		}
 	}
 }

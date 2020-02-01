@@ -25,13 +25,8 @@
         android:layout_height="wrap_content"
         android:id="@+id/editText1"
         android:layout_below="@+id/spinner1"
-        android:singleLine="true" />
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView1"
-        android:layout_below="@+id/spinner2"
-        android:textSize="20px" />
+        android:singleLine="true"
+        android:digits="0123456789," />
     <Button
         android:text="@string/reverse"
         android:layout_width="wrap_content"
@@ -41,4 +36,10 @@
         android:layout_centerInParent="false"
         android:layout_below="@+id/spinner2"
         android:layout_centerVertical="false" />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView1"
+        android:layout_below="@+id/button1"
+        android:textSize="30sp" />
 </RelativeLayout>

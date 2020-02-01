@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
 using Android.Runtime;
-using Android.Support.Design.Widget;
 using Android.Support.V7.App;
+using Android.Text.Method;
 using Android.Views;
 using Android.Widget;
 using App2.Interface;
@@ -16,6 +15,8 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Refit;
 
+//LIMIT ZNAKÓW DO WPISANIA
+
 namespace Przelicznik_walut
 {
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
@@ -24,8 +25,10 @@ namespace Przelicznik_walut
         INbpApi nbpApi;
         Spinner spinner1, spinner2;
         List<Currency> currencies;
-        Dictionary<string, double> currenciesDictionary;
         TextView textView;
+        Button reverseButton;
+        EditText editText;
+        ArrayAdapter<Currency> adapter;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -36,9 +39,20 @@ namespace Przelicznik_walut
             Android.Support.V7.Widget.Toolbar toolbar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             SetSupportActionBar(toolbar);
 
+            editText = FindViewById<EditText>(Resource.Id.editText1);
+            textView = FindViewById<TextView>(Resource.Id.textView1);
+            reverseButton = FindViewById<Button>(Resource.Id.button1);
             spinner1 = FindViewById<Spinner>(Resource.Id.spinner1);
             spinner2 = FindViewById<Spinner>(Resource.Id.spinner2);
-            spinner1.ItemSelected += new EventHandler<AdapterView.ItemSelectedEventArgs>(spinner1_ItemSelected);
+
+            editText.AfterTextChanged += new EventHandler<Android.Text.AfterTextChangedEventArgs>(AllowOneSeparator);
+
+            reverseButton.Click += new EventHandler(ReverseButtonClick) + new EventHandler(Calculate);
+
+            var spinnerHandler = new EventHandler<AdapterView.ItemSelectedEventArgs>(Calculate);
+            editText.AfterTextChanged += new EventHandler<Android.Text.AfterTextChangedEventArgs>(Calculate);
+            spinner1.ItemSelected += spinnerHandler;
+            spinner2.ItemSelected += spinnerHandler;
 
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
             {
@@ -49,15 +63,14 @@ namespace Przelicznik_walut
             nbpApi = RestService.For<INbpApi>(@"http://api.nbp.pl");
             currencies = await GetData();
 
-            List<string> currencyNames = new List<string>();
-            foreach(var i in currencies)
-            {
-                currencyNames.Add(i.name);
-            }
-            var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, currencyNames);
-            spinner1.Adapter = adapter;
-            spinner2.Adapter = adapter;
+            adapter = new ArrayAdapter<Currency>(this, Android.Resource.Layout.SimpleSpinnerItem, currencies);
+            spinner1.Adapter = spinner2.Adapter = adapter;
 
+        }
+
+        private void EditText_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         public override bool OnCreateOptionsMenu(IMenu menu)
@@ -100,11 +113,29 @@ namespace Przelicznik_walut
             }
         }
 
-        private void spinner1_ItemSelected(object sender, AdapterView.ItemSelectedEventArgs e)
+        private void Calculate<T>(object sender, T e)
         {
-            Spinner spinner = (Spinner)sender;
+            var source = adapter.GetItem(spinner1.SelectedItemPosition);
+            var target = adapter.GetItem(spinner2.SelectedItemPosition);
+            double amount;
+            if (editText.Text == "") amount = 1;
+            else amount = double.Parse('0' + editText.Text);
+            textView.Text = $"{amount} {source.code} = {Math.Round(amount*source.rate/target.rate,4,MidpointRounding.AwayFromZero)} {target.code}";
+            
         }
 
+        private void ReverseButtonClick(object sender, EventArgs e)
+        {
+            var tmp = spinner1.SelectedItemPosition;
+            spinner1.SetSelection(spinner2.SelectedItemPosition);
+            spinner2.SetSelection(tmp);
+        }
+
+        private void AllowOneSeparator(object sender, Android.Text.AfterTextChangedEventArgs e)
+        {
+            if(e.Editable.ToString().Contains(',')) editText.KeyListener = DigitsKeyListener.GetInstance("0123456789");
+            else editText.KeyListener = DigitsKeyListener.GetInstance("0123456789,");
+        }
     }
 }
 
