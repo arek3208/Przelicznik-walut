@@ -15,7 +15,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using Refit;
 
-//LIMIT ZNAKÓW DO WPISANIA
+//BRAK SIECI
 
 namespace Przelicznik_walut
 {
@@ -45,6 +45,35 @@ namespace Przelicznik_walut
             spinner1 = FindViewById<Spinner>(Resource.Id.spinner1);
             spinner2 = FindViewById<Spinner>(Resource.Id.spinner2);
 
+            if(savedInstanceState != null)
+            {
+                currencies = JsonConvert.DeserializeObject<List<Currency>>(savedInstanceState.GetString("currencies"));
+
+                editText.Text = savedInstanceState.GetCharSequence("edittext");
+                textView.Text = savedInstanceState.GetCharSequence("textview");
+
+                adapter = new ArrayAdapter<Currency>(this, Android.Resource.Layout.SimpleSpinnerItem, currencies);
+                spinner1.Adapter = spinner2.Adapter = adapter;
+                spinner1.SetSelection(savedInstanceState.GetInt("spinner1"));
+                spinner2.SetSelection(savedInstanceState.GetInt("spinner2"));
+            }
+
+            else
+            {
+                JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    Converters = { new StringEnumConverter() }
+                };
+
+                nbpApi = RestService.For<INbpApi>(@"http://api.nbp.pl");
+                currencies = await GetData();
+                adapter = new ArrayAdapter<Currency>(this, Android.Resource.Layout.SimpleSpinnerItem, currencies);
+                spinner1.Adapter = spinner2.Adapter = adapter;
+
+                spinner2.SetSelection(spinner2.Count - 1);
+            }
+
             editText.AfterTextChanged += new EventHandler<Android.Text.AfterTextChangedEventArgs>(AllowOneSeparator);
 
             reverseButton.Click += new EventHandler(ReverseButtonClick) + new EventHandler(Calculate);
@@ -53,41 +82,6 @@ namespace Przelicznik_walut
             editText.AfterTextChanged += new EventHandler<Android.Text.AfterTextChangedEventArgs>(Calculate);
             spinner1.ItemSelected += spinnerHandler;
             spinner2.ItemSelected += spinnerHandler;
-
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Converters = { new StringEnumConverter() }
-            };
-
-            nbpApi = RestService.For<INbpApi>(@"http://api.nbp.pl");
-            currencies = await GetData();
-
-            adapter = new ArrayAdapter<Currency>(this, Android.Resource.Layout.SimpleSpinnerItem, currencies);
-            spinner1.Adapter = spinner2.Adapter = adapter;
-
-        }
-
-        private void EditText_TextChanged(object sender, Android.Text.TextChangedEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool OnCreateOptionsMenu(IMenu menu)
-        {
-            MenuInflater.Inflate(Resource.Menu.menu_main, menu);
-            return true;
-        }
-
-        public override bool OnOptionsItemSelected(IMenuItem item)
-        {
-            int id = item.ItemId;
-            if (id == Resource.Id.action_settings)
-            {
-                return true;
-            }
-
-            return base.OnOptionsItemSelected(item);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
@@ -136,6 +130,17 @@ namespace Przelicznik_walut
             if(e.Editable.ToString().Contains(',')) editText.KeyListener = DigitsKeyListener.GetInstance("0123456789");
             else editText.KeyListener = DigitsKeyListener.GetInstance("0123456789,");
         }
+
+        protected override void OnSaveInstanceState(Bundle outState)
+        {
+            outState.PutString("currencies", JsonConvert.SerializeObject(currencies));
+            outState.PutCharSequence("edittext", editText.Text);
+            outState.PutCharSequence("textview", textView.Text);
+            outState.PutInt("spinner1", spinner1.SelectedItemPosition);
+            outState.PutInt("spinner2", spinner2.SelectedItemPosition);
+            base.OnSaveInstanceState(outState);
+        }
+
     }
 }
 
