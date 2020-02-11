@@ -1,4 +1,3 @@
-
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -26,12 +25,14 @@
         android:id="@+id/editText1"
         android:layout_below="@+id/spinner1"
         android:singleLine="true"
-        android:digits="0123456789," />
+        android:imeOptions="flagNoExtractUi"
+        android:digits="0123456789,"
+        android:hint="@string/amount" />
     <Button
         android:text="@string/reverse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/button1"
+        android:id="@+id/reverse"
         android:layout_centerHorizontal="false"
         android:layout_centerInParent="false"
         android:layout_below="@+id/spinner2"
@@ -40,6 +41,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:id="@+id/textView1"
-        android:layout_below="@+id/button1"
+        android:layout_below="@+id/reverse"
         android:textSize="30sp" />
 </RelativeLayout>

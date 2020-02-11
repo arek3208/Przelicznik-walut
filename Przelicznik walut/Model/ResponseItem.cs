@@ -6,6 +6,6 @@ namespace App2.Model
 	public class ResponseItem
 	{
 		[JsonProperty(PropertyName = "rates")]
-		public List<Currency> rates { get; set; }
+		public List<Currency> Rates { get; set; }
 	}
 }

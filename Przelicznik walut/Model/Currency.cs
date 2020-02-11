@@ -6,24 +6,24 @@ namespace App2.Model
 	{
 		public Currency(string name, string code, double rate)
 		{
-			this.name = name;
-			this.code = code;
-			this.rate = rate;
+			Name = name;
+			Code = code;
+			Rate = rate;
 		}
 			
 
 		[JsonProperty(PropertyName = "currency")]
-		public string name { get; set; }
+		public string Name { get; set; }
 
 		[JsonProperty(PropertyName = "code")]
-		public string code { get; set; }
+		public string Code { get; set; }
 
 		[JsonProperty(PropertyName = "mid")]
-		public double rate { get; set; }
+		public double Rate { get; set; }
 
 		public override string ToString()
 		{
-			return code + ' ' + name;
+			return Code + ' ' + Name;
 		}
 	}
 }

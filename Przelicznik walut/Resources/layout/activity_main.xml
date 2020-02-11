@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
+        <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -20,7 +20,41 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include
-        layout="@layout/content_main" />
+
+    <ViewFlipper
+        android:id="@+id/viewFlipper"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:minWidth="25px"
+        android:minHeight="25px">
+        <include
+            layout="@layout/content_main" />
+        <include
+            layout="@layout/errorlayout" />
+
+    </ViewFlipper>
+
+    <RelativeLayout
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/loadingLayout">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar1"
+            android:layout_centerVertical="false"
+            android:layout_centerInParent="true" />
+        <TextView
+            android:text="@string/loading"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loadingtext"
+            android:layout_below="@+id/progressBar1"
+            android:layout_centerInParent="true" />
+        
+        </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

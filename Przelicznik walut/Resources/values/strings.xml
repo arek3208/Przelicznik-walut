@@ -3,4 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="connection_error">Błąd połączenia</string>
     <string name="reverse">Odwróć</string>
+    <string name="refresh">Odśwież</string>
+    <string name="loading">Wczytywanie</string>
+    <string name="amount">Ilość</string>
 </resources>
